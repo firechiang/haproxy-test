@@ -99,7 +99,7 @@ $ scr -r /usr/local/haproxy root@server004:/usr/local/haproxy
 $ cd /usr/local/haproxy/sbin
 $ sudo ./haproxy -f /usr/local/haproxy/haproxy.cfg      # 启动 HAProxy，-f 是指定配置文件
 $ sudo ps -ef | grep haproxy                            # 查看 HAProxy 进程状态
-$ sudo kill `cat /usr/local/haproxy/haproxy.pid`   # 停止 HAProxy
+$ sudo kill `cat /usr/local/haproxy/haproxy.pid`        # 停止 HAProxy
 ```
 
 #### 六、Web管理端控制后端节点上下线，用得比较多的2个选项是READY（就绪状态）和MAINT（维护状态）（注意：需要在配置文件启动该功能：listen stats > stats admin if TRUE）
