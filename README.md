@@ -39,7 +39,7 @@ global
     # 指定启动的haproxy进程的个数，只能用于守护进程模式的haproxy；默认只启动一个进程，一般只在单进程仅能打开少数文件描述符的场景中才使用多进程模式（注意：多进程会影响Web控制台管理）
     nbproc 1
     # 进程ID文件所在目录
-    pidfile /var/run/haproxy.pid
+    pidfile /usr/local/haproxy/haproxy.pid
 defaults
     log global
     # 使用4层代理模式，”mode http”为7层代理模式
@@ -105,15 +105,23 @@ listen stats
 $ scr -r /usr/local/haproxy root@server004:/usr/local/haproxy
 ```
 
-#### 五、启动和停止HAProxy（我们配置的监控访问地址：http://server06:8100/rabbitmq-stats）
+#### 五、创建 HAProxy 的用户组和用户
+```bash
+# 创建 haproxy 用户组
+$ sudo groupadd -r -g 149 haproxy
+# 创建 haproxy 用户，并且配置 haproxy 用户没有登录权限
+$ sudo useradd -g haproxy -r -s /sbin/nologin -u 149 haproxy
+```
+
+#### 六、启动和停止HAProxy（我们配置的监控访问地址：http://server06:8100/rabbitmq-stats）
 ```bash
 $ cd /usr/local/haproxy/sbin
 $ sudo ./haproxy -f /usr/local/haproxy/haproxy.cfg      # 启动 HAProxy，-f 是指定配置文件
 $ sudo ps -ef | grep haproxy                            # 查看 HAProxy 进程状态
-$ sudo kill `cat /var/run/haproxy.pid`               # 停止 HAProxy
+$ sudo kill `cat /usr/local/haproxy/haproxy.pid`               # 停止 HAProxy
 ```
 
-#### 六、Web管理端控制后端节点上下线，用得比较多的2个选项是READY（就绪状态）和MAINT（维护状态）（注意：需要在配置文件启动该功能：listen stats > stats admin if TRUE）
+#### 七、Web管理端控制后端节点上下线，用得比较多的2个选项是READY（就绪状态）和MAINT（维护状态）（注意：需要在配置文件启动该功能：listen stats > stats admin if TRUE）
 ```bash
 1，MAINT 表示被勾选的节点需要进行维护，Apply进入维护状态后，Haproxy将会停止往这些节点转发请求，并等待已有的请求结束连接
 2，READY 表示被勾选的节点已经完成维护，Apply进入就绪状态后，Haproxy会自动发起健康检查，如果检查通过，这些节点将进入映射状态，接受映射请求了。
