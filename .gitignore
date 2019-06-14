@@ -4,7 +4,7 @@ target/
 *.war
 *.zip
 *.tar
-*.tar.gz
+# *.tar.gz
 
 # eclipse ignore
 .settings/
