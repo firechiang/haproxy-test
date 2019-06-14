@@ -24,22 +24,33 @@ global
     log 127.0.0.1 local0 info
     # 每个haproxy进程所接受的最大并发连接数
     maxconn 5120
+    # 修改haproxy的工作目录至指定的目录并在放弃权限之前执行chroot()操作，可以提升haproxy的安全级别，不过需要注意的是要确保指定的目录为空目录且任何用户均不能有写权限
     chroot /usr/local/haproxy
-    uid 99
-    gid 99
-    daemon
+    # 以指定的用户运行haproxy进程
+    user haproxy
+    # 以指定的用户组运行haproxy，建议使用专用于运行haproxy的用户组，以免因权限问题带来风险
+    group haproxy
+    # haproxy调试级别，建议只在开启单进程的时候调试
     quiet
-    nbproc 20
+    # 让Haproxy以守护进程的方式工作于后台
+    daemon
+    # 在haproxy后端有着众多服务器的场景中，在精确的时间间隔后统一对众服务器进行健康状况检查可能会带来意外问题；此选项用于将其检查的时间间隔长度上增加或减小一定的随机时长
+    spread-checks 1
+    # 指定启动的haproxy进程的个数，只能用于守护进程模式的haproxy；默认只启动一个进程，一般只在单进程仅能打开少数文件描述符的场景中才使用多进程模式（注意：多进程会影响Web控制台管理）
+    nbproc 1
     # 进程ID文件所在目录
-    pidfile /usr/local/haproxy/haproxy.pid
+    pidfile /var/run/haproxy.pid
 defaults
     log global
     # 使用4层代理模式，”mode http”为7层代理模式
     mode tcp
-    # if you set mode to tcp,then you nust change tcplog into httplog
+    # 如果是TCP代理，就是使用 tcplog；HTTP代理就使用 httplog
     option tcplog
+    # 不记录空信息
     option dontlognull
+    # 当对server的connection失败后，重试的次数
     retries 3
+    # 开启重新分发功能，服务器挂了后是不是将定向至此服务器上的请求分发别处 redirect 重定向
     option redispatch
     # 每个haproxy进程所接受的最大并发连接数
     maxconn 2000
@@ -99,7 +110,7 @@ $ scr -r /usr/local/haproxy root@server004:/usr/local/haproxy
 $ cd /usr/local/haproxy/sbin
 $ sudo ./haproxy -f /usr/local/haproxy/haproxy.cfg      # 启动 HAProxy，-f 是指定配置文件
 $ sudo ps -ef | grep haproxy                            # 查看 HAProxy 进程状态
-$ sudo kill `cat /usr/local/haproxy/haproxy.pid`        # 停止 HAProxy
+$ sudo kill `cat /var/run/haproxy.pid`               # 停止 HAProxy
 ```
 
 #### 六、Web管理端控制后端节点上下线，用得比较多的2个选项是READY（就绪状态）和MAINT（维护状态）（注意：需要在配置文件启动该功能：listen stats > stats admin if TRUE）
