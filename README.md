@@ -105,7 +105,17 @@ listen stats
 $ scp -r /usr/local/haproxy root@server004:/usr/local
 ```
 
-#### 五、创建 HAProxy 的用户组和用户（注意：每个节点都要创建）
+#### 五、修改[vi /usr/local/haproxy/haproxy.cfg]配置代理绑定和监控绑定（注意：每个节点都要创建，具体根据主机名修改）
+```bash
+listen rabbitmq_cluster
+    # 绑定访问主机和端口（注意：端口最好不要和代理服务使用相同的端口以免发生冲突）
+    bind server004:5673
+#配置haproxy web监控，查看统计信息
+listen stats
+    bind server004:8100
+```
+
+#### 六、创建 HAProxy 的用户组和用户（注意：每个节点都要创建）
 ```bash
 # 创建 haproxy 用户组
 $ sudo groupadd -r -g 149 haproxy
@@ -113,7 +123,7 @@ $ sudo groupadd -r -g 149 haproxy
 $ sudo useradd -g haproxy -r -s /sbin/nologin -u 149 haproxy
 ```
 
-#### 六、启动和停止HAProxy（我们配置的监控访问地址：http://server06:8100/rabbitmq-stats）
+#### 七、启动和停止HAProxy（我们配置的监控访问地址：http://server06:8100/rabbitmq-stats）
 ```bash
 $ cd /usr/local/haproxy/sbin
 $ sudo ./haproxy -f /usr/local/haproxy/haproxy.cfg      # 启动 HAProxy，-f 是指定配置文件
@@ -121,7 +131,7 @@ $ sudo ps -ef | grep haproxy                            # 查看 HAProxy 进程�
 $ sudo kill `cat /usr/local/haproxy/haproxy.pid`               # 停止 HAProxy
 ```
 
-#### 七、Web管理端控制后端节点上下线，用得比较多的2个选项是READY（就绪状态）和MAINT（维护状态）（注意：需要在配置文件启动该功能：listen stats > stats admin if TRUE）
+#### 八、Web管理端控制后端节点上下线，用得比较多的2个选项是READY（就绪状态）和MAINT（维护状态）（注意：需要在配置文件启动该功能：listen stats > stats admin if TRUE）
 ```bash
 1，MAINT 表示被勾选的节点需要进行维护，Apply进入维护状态后，Haproxy将会停止往这些节点转发请求，并等待已有的请求结束连接
 2，READY 表示被勾选的节点已经完成维护，Apply进入就绪状态后，Haproxy会自动发起健康检查，如果检查通过，这些节点将进入映射状态，接受映射请求了。
