@@ -105,7 +105,7 @@ listen stats
 $ scp -r /usr/local/haproxy root@server004:/usr/local
 ```
 
-#### 五、创建 HAProxy 的用户组和用户
+#### 五、创建 HAProxy 的用户组和用户（注意：每个节点都要创建）
 ```bash
 # 创建 haproxy 用户组
 $ sudo groupadd -r -g 149 haproxy
