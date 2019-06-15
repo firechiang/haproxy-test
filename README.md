@@ -21,7 +21,7 @@ $ sudo make TARGET=linux31 ARCH=x86_64 && sudo make install PREFIX=/usr/local/ha
 ```bash
 #logging options
 global
-    log 127.0.0.1 local10 info
+    log 127.0.0.1 local0 info
     # 每个haproxy进程所接受的最大并发连接数
     maxconn 5120
     # 修改haproxy的工作目录至指定的目录并在放弃权限之前执行chroot()操作，可以提升haproxy的安全级别，不过需要注意的是要确保指定的目录为空目录且任何用户均不能有写权限
