@@ -102,7 +102,7 @@ listen stats
 
 #### 四、分发安装包到其它机器
 ```bash
-$ scp -r /usr/local/haproxy root@server004:/usr/local/haproxy
+$ scp -r /usr/local/haproxy root@server004:/usr/local
 ```
 
 #### 五、创建 HAProxy 的用户组和用户
