@@ -65,8 +65,8 @@ listen rabbitmq_cluster
     bind server003:5673
     # 配置TCP模式
     mode tcp
-    # 日志格式
-    option tcplog
+    # 是否允许向server和client发送keepalive（允许客户端发送ack探测包，探测服务的TCP/IP连接是否有效）
+    option tcpka
     #balance url_paramuserid
     #balance url_paramsession_idcheck_post 64
     #balance hdr(User-Agent)
