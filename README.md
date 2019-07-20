@@ -65,6 +65,8 @@ listen rabbitmq_cluster
     bind server003:5673
     # 配置TCP模式
     mode tcp
+    # 日志格式
+    option tcplog
     #balance url_paramuserid
     #balance url_paramsession_idcheck_post 64
     #balance hdr(User-Agent)
